@@ -1,0 +1,70 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.271
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NS_EncuestaCOVID", "NS_EncuestaCOVID\NS_EncuestaCOVID.csproj", "{58A867F2-E7A6-4A7B-B9DB-F20AACDB97D9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NS_COVID_Entities", "NS_COVID_Entities\NS_COVID_Entities.csproj", "{04CCA7E5-EC91-4D91-8A96-390A35B3D7A1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NS_COVID_Services", "NS_COVID_Services\NS_COVID_Services.csproj", "{6D09DC34-7992-467C-9827-D940ECB006A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NS_COVID_Repositories", "NS_COVID_Repositories\NS_COVID_Repositories.csproj", "{C44F6720-0F32-4349-86A2-D12E93FB892D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NS_Covid_Alerts", "NS_Covid_Alerts\NS_Covid_Alerts.csproj", "{94F6439B-EF92-416B-B3AB-899BCDEC1BEE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{58A867F2-E7A6-4A7B-B9DB-F20AACDB97D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58A867F2-E7A6-4A7B-B9DB-F20AACDB97D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58A867F2-E7A6-4A7B-B9DB-F20AACDB97D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58A867F2-E7A6-4A7B-B9DB-F20AACDB97D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04CCA7E5-EC91-4D91-8A96-390A35B3D7A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04CCA7E5-EC91-4D91-8A96-390A35B3D7A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04CCA7E5-EC91-4D91-8A96-390A35B3D7A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04CCA7E5-EC91-4D91-8A96-390A35B3D7A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D09DC34-7992-467C-9827-D940ECB006A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D09DC34-7992-467C-9827-D940ECB006A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D09DC34-7992-467C-9827-D940ECB006A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D09DC34-7992-467C-9827-D940ECB006A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C44F6720-0F32-4349-86A2-D12E93FB892D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C44F6720-0F32-4349-86A2-D12E93FB892D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C44F6720-0F32-4349-86A2-D12E93FB892D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C44F6720-0F32-4349-86A2-D12E93FB892D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94F6439B-EF92-416B-B3AB-899BCDEC1BEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94F6439B-EF92-416B-B3AB-899BCDEC1BEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94F6439B-EF92-416B-B3AB-899BCDEC1BEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94F6439B-EF92-416B-B3AB-899BCDEC1BEE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {88A5BD7E-9E54-4AD0-902C-82BB3E7E405F}
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 6
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://dev.azure.com/newsoftjcdiaz
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = NS_Covid_Alerts\\NS_Covid_Alerts.csproj
+		SccProjectName1 = NS_Covid_Alerts
+		SccLocalPath1 = NS_Covid_Alerts
+		SccProjectUniqueName2 = NS_COVID_Entities\\NS_COVID_Entities.csproj
+		SccProjectName2 = NS_COVID_Entities
+		SccLocalPath2 = NS_COVID_Entities
+		SccProjectUniqueName3 = NS_COVID_Repositories\\NS_COVID_Repositories.csproj
+		SccProjectName3 = NS_COVID_Repositories
+		SccLocalPath3 = NS_COVID_Repositories
+		SccProjectUniqueName4 = NS_COVID_Services\\NS_COVID_Services.csproj
+		SccProjectName4 = NS_COVID_Services
+		SccLocalPath4 = NS_COVID_Services
+		SccProjectUniqueName5 = NS_EncuestaCOVID\\NS_EncuestaCOVID.csproj
+		SccProjectName5 = NS_EncuestaCOVID
+		SccLocalPath5 = NS_EncuestaCOVID
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,66 @@
+﻿@model IEnumerable<NS_COVID_Entities.Entities.DetalleInformePersona>
+
+
+<table class="table">
+    <tr>
+        <th>
+            Número documento
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Nombre)
+        </th>
+        <th>
+            Inicio jornada
+        </th>
+        <th>
+            Fin jornada
+        </th>
+        <th>
+            Síntomas
+        </th>
+        <th>
+            Temp inicio
+        </th>
+        <th>
+            Temp fin
+        </th>
+
+    </tr>
+
+    @if (Model.Count() > 0)
+    {
+        foreach (var item in Model)
+        {
+            <tr class="@(item.GeneroAlerta ? "AlertaRegistro": "")">
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumeroDocumento)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nombre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.InicioJornanda)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FinJornada)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Sintomas)
+                </td>
+                <td class="text-center">
+                    @Html.DisplayFor(modelItem => item.TemperaturaInicio)
+                </td>
+                <td class="text-center">
+                    @Html.DisplayFor(modelItem => item.TemperaturaFin)
+                </td>
+
+            </tr>
+        }
+
+    }
+    else {
+        <tr>
+            <td colspan="8">No se encontraron registros para la búsqueda</td>
+        </tr>
+    }
+</table>

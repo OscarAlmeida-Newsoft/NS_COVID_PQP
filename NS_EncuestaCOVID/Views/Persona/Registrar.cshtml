@@ -1,0 +1,422 @@
+﻿@using NS_COVID_Entities.Entities;
+@model NS_EncuestaCOVID.Models.PersonaVM
+
+@{
+    ViewBag.Title = "Registro Inicial";
+}
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            EvaluaCamposCondicionales($("#Vinculo").val());
+            evaluaTerminosUso();
+
+            $("#Vinculo").change(function () {
+
+                EvaluaCamposCondicionales($("#Vinculo").val());
+            });
+
+            function EvaluaCamposCondicionales(valorSeleccionado) {
+
+                if(valorSeleccionado == ""){
+                    $("#PersonalExterno").hide();
+                }else if (valorSeleccionado == "Empleado"){
+                    $("#PersonalExterno").hide();
+                    $("#EmpleadoDirecto").val(true);
+                } else {
+                    $("#PersonalExterno").show();
+                    $("#EmpleadoDirecto").val(false);
+                }
+            }
+
+            function evaluaTerminosUso() {
+                if ($("#AceptaTerminosUso").is(':checked')) {
+                    $('#submit').removeAttr("disabled");
+                } else {
+                    $('#submit').attr("disabled", true);
+                }
+            }
+
+            $('#AceptaTerminosUso').click(function () {
+                evaluaTerminosUso();
+            });
+
+            //$('#exampleModal').modal('show');
+            $("#submit").click(function (e) {
+
+                var valido = true;
+                if ($('#TipoDocumento').val() == "") {
+                    valido = false;
+                    $('#exampleModal').modal('show');
+                    return;
+                }
+                if ($('#NumeroDocumento').val() == "") {
+                    valido = false;
+                    $("#MensajeModal").html("Debe ingresar número de documento");
+                    $('#exampleModal').modal('show');
+                    return;
+                }
+                if ($('#Nombres').val() == "") {
+                    valido = false;
+                    $("#MensajeModal").html("Debe ingresar nombre");
+                    $('#exampleModal').modal('show');
+                    return;
+                }
+                if ($('#Apellidos').val() == "") {
+                    valido = false;
+                    $("#MensajeModal").html("Debe ingresar apellidos");
+                    $('#exampleModal').modal('show');
+                    return;
+                }
+                if ($("input:radio[name=Sexo]:checked").val() == undefined) {
+                    valido = false;
+                    $("#MensajeModal").html("Debe ingresar un sexo");
+                    $('#exampleModal').modal('show');
+                    return;
+                }
+                if ($('#FechaNacimiento').val() == "") {
+                    valido = false;
+                    $("#MensajeModal").html("Debe ingresar una fecha de nacimiento");
+                    $('#exampleModal').modal('show');
+                    return;
+                }
+                if ($('#NumeroCelular').val() == "") {
+                    valido = false;
+                    $("#MensajeModal").html("Debe ingresar número de celular");
+                    $('#exampleModal').modal('show');
+                    return;
+                }
+                if ($('#CorreoElectronico').val() == "") {
+                    valido = false;
+                    $("#MensajeModal").html("Debe ingresar correo electrónico");
+                    $('#exampleModal').modal('show');
+                    return;
+                }
+                if ($('#Vinculo').val() == "") {
+                    valido = false;
+                    $("#MensajeModal").html("Debe seleccionar un vinculo");
+                    $('#exampleModal').modal('show');
+                    return;
+                }
+                if ($('#Vinculo').val() == "Visitante" && $('#Empresa').val() == "") {
+                    valido = false;
+                    $("#MensajeModal").html("Debe ingresar una empresa");
+                    $('#exampleModal').modal('show');
+                    return;
+                }
+
+
+                loadingDiv.show();
+                 var respuesta = {};
+                 respuesta.TipoDocumento = $('#TipoDocumento').val();
+                 respuesta.NumeroDocumento = $('#NumeroDocumento').val();
+                 respuesta.Nombres = $('#Nombres').val();
+                 respuesta.Apellidos = $('#Apellidos').val();
+                respuesta.Sexo = $("input:radio[name=Sexo]:checked").val();
+                 respuesta.FechaNacimiento = $('#FechaNacimiento').val();
+                 respuesta.NumeroCelular = $('#NumeroCelular').val();
+                 respuesta.CorreoElectronico = $('#CorreoElectronico').val();
+                 respuesta.Vinculo = $('#Vinculo').val();
+                 respuesta.Empresa = $('#Empresa').val();
+                 respuesta.Placa = $('#Placa').val();
+                 respuesta.AceptaTerminosUso = $('#AceptaTerminosUso').val();
+                 respuesta.respuestas = [];
+
+                 if (respuesta.Vinculo == 'Visitante') {
+                     $('.respuestaPregunta').each(function (i, obj) {
+                         var detalleRespuesta = {};
+                         detalleRespuesta.IdPregunta = $(obj).data('idpregunta');
+
+                         tipo = $(obj).data('tipo');
+                         if (tipo == "checkbox") {
+                             if ($(obj).is(':checked')) {
+                                 detalleRespuesta.ValorRespuesta = "SI";
+                             } else {
+                                 detalleRespuesta.ValorRespuesta = "NO";
+                             }
+                         } else {
+                             detalleRespuesta.ValorRespuesta = $(obj).val();
+                         }
+
+                         respuesta.respuestas.push(detalleRespuesta);
+                     });
+                 }
+
+
+                if (valido) {
+
+                    $.ajax({
+                        url: '@Url.Action("Registrar")',
+                        data: JSON.stringify(respuesta),
+                        type: 'POST',
+                        contentType: 'application/json; charset=utf-8'
+                    })
+                        .done(function (data) {
+                            loadingDiv.hide();
+                        if (data.GeneroAlerta) {
+                            Swal.fire({
+                                title: 'Atención',
+                                html: '<div class="alert alert-danger">Señor(a) ' + data.persona.Nombres + ', ' + data.persona.TipoDocumento + ' ' + data.persona.NumeroDocumento +
+                                    ' se realizó registro para la fecha: ' + data.persona.FechaHoraCreacion + ' presentó síntomas de acuerdo con las respuestas en las siguientes preguntas: ' +
+                                    data.persona.cadenaPregunta + 'Por favor comúniquese con SST para poder ingresar a la compañia.</div>',
+                                icon: 'error',
+                                showCloseButton: false,
+                                confirmButtonText: 'Aceptar',
+                            }).then((result) => {
+                                /* Realiza esta acción al seleccionar el botón */
+                                if (result.isConfirmed) {
+                                    location.href = '@Url.Action("Index","Respuestas")'
+                                }
+                            })
+                        }else{
+                              Swal.fire({
+                                title: 'Atención',
+                                  html: '<div class="alert alert-success">Señor(a) ' + data.persona.Nombres + ', ' + data.persona.TipoDocumento + ' ' + data.persona.NumeroDocumento +
+                                      ' se realizó registro para la fecha ' + data.persona.FechaHoraCreacion + ' y no presentó ningún síntoma.</div> ',
+                                icon: 'success',
+                                showCloseButton: false,
+                                confirmButtonText: 'Aceptar',
+                            }).then((result) => {
+                                /* Realiza esta acción al seleccionar el botón */
+                                if (result.isConfirmed) {
+                                    @*location.href = '@Url.Action("Index","Respuestas")' + '?cedula=' + respuesta.NumeroDocumento;*@
+                                    location.href = '@Url.Action("Index","Respuestas")'
+                                }
+                            })
+
+                        }
+                    })
+                    .fail(function (pRequest, pException) {
+                        //loadingDiv.hide();
+                        //var responseTitle = $(pRequest.responseText).filter('title').get(0);
+                        //Lobibox.alert('error', {
+                        //    msg: $(responseTitle).text() + "<br\>" + formatErrorMessage(pRequest, pException)
+                        //});
+                    });
+                }
+
+                return false;
+
+            });
+
+        });
+
+    </script>
+
+}
+
+<div class="col-md-3"></div>
+<div class="col-md-8">
+    <h2>Registro Inicial</h2>
+    <div class="form-horizontal">
+        <h4>Bienvenido, favor ingrese sus datos personales</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.EmpleadoDirecto)
+        <div class="form-group text-center">
+            @Html.LabelFor(model => model.TipoDocumento, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-6">
+                @Html.DropDownListFor(m => m.TipoDocumento, Model.TipoDocumentoList, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.TipoDocumento, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+
+        <div class="form-group text-center">
+            @Html.LabelFor(model => model.NumeroDocumento, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-6">
+                @Html.EditorFor(model => model.NumeroDocumento, new { htmlAttributes = new { @class = "form-control", type = "number" } })
+                @Html.ValidationMessageFor(model => model.NumeroDocumento, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+
+        <div class="form-group text-center">
+            @Html.LabelFor(model => model.Nombres, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-6">
+                @Html.EditorFor(model => model.Nombres, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Nombres, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+
+        <div class="form-group text-center">
+            @Html.LabelFor(model => model.Apellidos, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-6">
+                @Html.EditorFor(model => model.Apellidos, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Apellidos, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+
+        <div class="form-group text-center">
+            @Html.LabelFor(model => model.Sexo, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-6">
+                <div class="col-md-1"></div>
+                <div class="col-md-11">
+                    <label class="radio">
+                        @Html.RadioButtonFor(m => m.Sexo, "M")
+                        Masculino
+                    </label>
+
+                    <label class="radio">
+                        @Html.RadioButtonFor(m => m.Sexo, "F")
+                        Femenino
+                    </label>
+                    @Html.ValidationMessageFor(model => model.Sexo, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group text-center">
+            @Html.LabelFor(model => model.FechaNacimiento, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-6">
+                @Html.EditorFor(model => model.FechaNacimiento, new { htmlAttributes = new { @type = "date", @class = "form-control", } })
+                @Html.ValidationMessageFor(model => model.FechaNacimiento, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+
+        <div class="form-group text-center">
+            @Html.LabelFor(model => model.NumeroCelular, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-6">
+                @Html.EditorFor(model => model.NumeroCelular, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.NumeroCelular, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+
+        <div class="form-group text-center">
+            @Html.LabelFor(model => model.CorreoElectronico, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-6">
+                @Html.EditorFor(model => model.CorreoElectronico, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.CorreoElectronico, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Vinculo, htmlAttributes: new { @class = "control-label col-md-3" })
+            <div class="col-md-6">
+                @Html.DropDownListFor(m => m.Vinculo, Model.Vinculos, new { @class = "form-control" })
+
+                @Html.ValidationMessageFor(model => model.Vinculo, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+
+        <section id="PersonalExterno">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Empresa, htmlAttributes: new { @class = "control-label col-md-3" })
+                <div class="col-md-6">
+                    @Html.EditorFor(model => model.Empresa, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Empresa, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Placa, htmlAttributes: new { @class = "control-label col-md-3" })
+                <div class="col-md-6">
+                    @Html.EditorFor(model => model.Placa, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Placa, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-horizontal">
+
+                @foreach (Pregunta p in Model.cuestionario)
+                {
+                    <div class="form-group">
+                        <label id="question" class="control-label col-md-7">@p.Enunciado</label>
+
+                        @switch (p.Tipo)
+                        {
+                            case "checkbox":
+                                <div class="col-md-2 container-swich">
+                                    NO <label class="switch">
+                                        <input data-idpregunta="@p.Id" data-tipo="@p.Tipo" type="checkbox" class="respuestaPregunta">
+                                        <span class="slider round"></span>
+                                    </label> SI
+                                </div>
+                                break;
+                            case "text":
+                                <div class="col-md-2">
+                                    <input type="text" data-idpregunta="@p.Id" data-tipo="@p.Tipo" class="respuestaPregunta form-control" value="@p.ValorXDefecto" />
+                                </div>
+                                break;
+                            case "select":
+                                <div class="col-md-3">
+                                    <select data-idpregunta="@p.Id" data-tipo="@p.Tipo" class="respuestaPregunta form-control" value="@p.ValorXDefecto">
+                                        @foreach (Opciones o in p.opciones)
+                                        {
+                                            if (p.ValorXDefecto == o.TextoOpcion)
+                                            {
+                                                <option selected value="@o.TextoOpcion">@o.TextoOpcion</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@o.TextoOpcion">@o.TextoOpcion</option>
+                                            }
+
+
+                                        }
+                                    </select>
+
+                                </div>
+                                break;
+                        }
+
+                    </div>
+                    <hr />
+                }
+            </div>
+
+        </section>
+
+        <div class="form-group text-center">
+            <div class="col-md-2"></div>
+            <div class="col-md-5">
+                <label class="control-label"><a href="@Url.Action("DescargaTerminosUso")" target="_blank">Acepta Términos de Uso</a> </label>
+
+                @Html.CheckBoxFor(model => model.AceptaTerminosUso, true)
+
+                @Html.ValidationMessageFor(model => model.AceptaTerminosUso, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group text-center">
+            <div class="col-md-2"></div>
+            <div class="col-md-5 text-center">
+                <input id="submit" type="submit" value="Registrarse" class="btn btn-default" disabled />
+            </div>
+            <div class="col-md-4"></div>
+        </div>
+    </div>
+</div>
+<div class="col-md-3"></div>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <span id="MensajeModal"></span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Aceptar</button>
+                @*<button type="button" class="btn btn-primary">Save changes</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+
+

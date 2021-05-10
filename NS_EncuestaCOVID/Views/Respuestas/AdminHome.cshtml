@@ -1,0 +1,132 @@
+﻿@model NS_EncuestaCOVID.Models.RespuestaFilterVM
+@{
+    ViewBag.Title = "Reporte General";
+}
+
+@section Scripts{
+
+    <script type="text/javascript">
+
+        var gPageSettings = {
+            FiltroBusqueda: "",
+            FechaInicial: "",
+            FechaFinal: "",
+            Sede: ''
+        };
+
+        var gGetUrlAction = {
+            RefreshGrid: '@Url.Action("List")'
+        };
+
+        $(document).ready(function () {
+
+            Search();
+            SearchSedes();
+
+        });
+
+        function SearchSedes() {
+            $.ajax({
+                url: '@Url.Action("SearchSede")',
+                data: JSON.stringify(gPageSettings),
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8'
+            })
+                .done(function (data) {
+                    if (data.Error) {
+                        $("#slcSedes").append(data.Mensaje);
+                    }
+                })
+                .fail(function (pRequest, pException) {
+                    loadingDiv.hide();
+                });
+        }
+
+        function refreshGrid() {
+            loadingDiv.show();
+
+            $.ajax({
+                url: gGetUrlAction.RefreshGrid,
+                data: JSON.stringify(gPageSettings),
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8'
+            })
+                .done(function (data) {
+                    if (data.pMessage != undefined) {
+                        loadingDiv.hide();
+                        //console.log("Server Error: \n" + data.pMessage);
+                        //Lobibox.alert('error', {
+                        //    msg: gSmsAlertRepository.GeneralError
+                        //});
+                    }
+                    $('#Recordlist').html(data);
+                    loadingDiv.hide();
+                })
+                .fail(function (pRequest, pException) {
+                    loadingDiv.hide();
+                    //var responseTitle = $(pRequest.responseText).filter('title').get(0);
+                    //Lobibox.alert('error', {
+                    //    msg: $(responseTitle).text() + "<br\>" + formatErrorMessage(pRequest, pException)
+                    //});
+                });
+        }
+
+        function SearchEnter(e) {
+            tecla = (document.all) ? e.keyCode : e.which;
+            if (tecla == 13) Search();
+        }
+
+
+        function Search() {
+
+            gPageSettings.FiltroBusqueda = $('#txtFiltroBusqueda').val();
+            gPageSettings.FechaInicial = $('#txtFechaInicial').val().trim();
+            gPageSettings.FechaFinal = $('#txtFechaFinal').val().trim();
+            gPageSettings.Sede = $('#slcSedes option:selected').val();
+            //if (!globalVals.validateNoSpecialCharactersString(gPageSettings.ValueSearch)) {
+            //    $('#errorListMessagesLi').html('<li><strong>Search field</strong> : Please enter valid characters</li>');
+            //    $('#errorMessagesList').show("slow");
+            //    return;
+            //} else {
+            //    $('#errorMessagesList').hide();
+            //}
+            refreshGrid();
+        }
+    </script>
+
+}
+
+<h2>Reporte general - Mi registro COVID</h2>
+<div class="row form-group">
+
+    <div class="col-md-3">
+        <label class="control-label">Búsqueda</label>
+        <input type="text" id="txtFiltroBusqueda" placeholder="Número Documento o Nombre" class="form-control" onkeypress="SearchEnter(event)" />
+    </div>
+    <div class="col-md-2">
+        <label class="control-label">Fecha inicial</label>
+        @Html.TextBox("txtFechaInicial", Model.FechaInicial, new { @class = "form-control", type = "date" })
+
+    </div>
+    <div class="col-md-2">
+        <label class="control-label">Fecha final</label>
+        @Html.TextBox("txtFechaFinal", Model.FechaFinal, new { @class = "form-control", type = "date" })
+
+    </div>
+    <div class="col-md-2">
+        <label class="control-label">Sede</label>
+        <select class="form-control" id="slcSedes"></select>
+    </div>
+</div>
+<div class="row form-group">
+    <div class="col-md-2">
+        <input type="button" id="btnSearch" class="btn btn-primary btn-sm" value="Buscar" onclick="Search()" />
+    </div>
+</div>
+
+
+<div class="row form-group">
+    <div id="Recordlist">
+        
+    </div>
+</div>
